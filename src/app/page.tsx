@@ -1,101 +1,224 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { Button } from '#/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '#/components/ui/card';
+import { Label } from '#/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '#/components/ui/radio-group';
+import { Switch } from '#/components/ui/switch';
+import { ethers, LangEn, Wordlist } from 'ethers';
+import { wordlists as wordlists0 } from 'ethers/wordlists';
+import {
+  LangCz,
+  // LangEn,
+  LangEs,
+  LangFr,
+  LangIt,
+  LangJa,
+  LangKo,
+  LangPt,
+  LangZh,
+} from 'ethers/wordlists-extra';
+import { Copy } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { useCallback, useMemo, useState } from 'react';
+
+const wordlists: Record<string, Wordlist> = {
+  cz: LangCz.wordlist(),
+  en: LangEn.wordlist(),
+  es: LangEs.wordlist(),
+  fr: LangFr.wordlist(),
+  it: LangIt.wordlist(),
+  pt: LangPt.wordlist(),
+  ja: LangJa.wordlist(),
+  ko: LangKo.wordlist(),
+  zh_cn: LangZh.wordlist('cn'),
+  zh_tw: LangZh.wordlist('tw'),
+};
+
+export default function Page() {
+  console.log('====================================');
+  console.log('wordlists0', wordlists0);
+  console.log('====================================');
+  const [showPrivateKey, setShowPrivateKey] = useState(false);
+
+  const wordlistsKeys = useMemo(() => Object.keys(wordlists), [wordlists]);
+  const [wordlistsKey, setWordlistsKey] = useState<string>();
+
+  const [entropy, setEntropy] = useState<ethers.BytesLike | null>(null);
+
+  const mnemonic = useMemo(() => {
+    return entropy != null
+      ? ethers.Mnemonic.fromEntropy(
+          entropy,
+          null,
+          wordlistsKey != null ? wordlists[wordlistsKey] : null
+        )
+      : null;
+  }, [entropy, wordlists, wordlistsKey]);
+
+  const wallet = useMemo(
+    () =>
+      mnemonic != null ? ethers.HDNodeWallet.fromMnemonic(mnemonic) : null,
+    [mnemonic]
+  );
+
+  const onGenerateMnemonic = useCallback(() => {
+    const randomBytes = ethers.randomBytes(32);
+    setEntropy(randomBytes);
+  }, []);
+
+  const onCopy = useCallback(async (text: string, message: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert(message);
+    } catch (error) {
+      console.error('Failed to copy: ', error);
+    }
+  }, []);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+    <section className="container mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Ethereum Mnemonic Wallet Generator</CardTitle>
+          <CardDescription>
+            Generate a new Ethereum wallet mnemonic phrase
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center space-y-4">
+          <Button onClick={onGenerateMnemonic}>Generate New Mnemonic</Button>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="private-mode"
+              checked={showPrivateKey}
+              onCheckedChange={setShowPrivateKey}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <Label htmlFor="private-mode">显示私密信息</Label>
+          </div>
+
+          <RadioGroup
+            value={wordlistsKey}
+            onValueChange={setWordlistsKey}
+            className="flex flex-wrap"
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            {wordlistsKeys.map(wordlistsKey => (
+              <div key={wordlistsKey} className="flex items-center gap-2">
+                <RadioGroupItem
+                  value={wordlistsKey}
+                  id={`wordlists-${wordlistsKey}`}
+                />
+                <Label
+                  htmlFor={`wordlists-${wordlistsKey}`}
+                  className="uppercase"
+                >
+                  {wordlistsKey}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+
+          {mnemonic != null && (
+            <>
+              <p className="text-xs font-mono">
+                {showPrivateKey
+                  ? mnemonic.phrase
+                  : '********************************'}
+              </p>
+              <div className="bg-muted p-2 rounded-lg w-full break-all relative">
+                <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-12 gap-2">
+                  {mnemonic.phrase.split(/\s/).map((word, index) => (
+                    <div
+                      key={index}
+                      className="h-8 text-sm font-mono bg-white text-primary rounded-full flex items-center justify-center"
+                    >
+                      {showPrivateKey ? word : '*'}
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1 right-1"
+                  onClick={() =>
+                    onCopy(
+                      mnemonic.phrase,
+                      'Mnemonic phrase copied to clipboard! Keep it secure!'
+                    )
+                  }
+                  aria-label="Copy mnemonic phrase"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {wallet && (
+                <>
+                  <div className="bg-muted p-4 rounded-md w-full break-all relative">
+                    <p className="text-sm font-mono">{wallet.address}</p>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-1 right-1"
+                      onClick={() =>
+                        onCopy(
+                          wallet.address,
+                          'Wallet address copied to clipboard!'
+                        )
+                      }
+                      aria-label="Copy wallet address"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <QRCodeSVG value={wallet.address} size={200} />
+                  <div className="bg-muted p-4 rounded-md w-full break-all relative">
+                    <p className="text-sm font-mono">
+                      {showPrivateKey
+                        ? wallet.privateKey
+                        : '********************************'}
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-1 right-1"
+                      onClick={() =>
+                        onCopy(
+                          wallet.privateKey,
+                          'Private key copied to clipboard! Keep it secure!'
+                        )
+                      }
+                      aria-label="Copy private key"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </CardContent>
+        <CardFooter className="text-sm text-muted-foreground text-center flex flex-col space-y-2">
+          <p>
+            Always keep your mnemonic phrase secure and never share it with
+            anyone.
+          </p>
+          <p>
+            This mnemonic is generated client-side and is not stored anywhere.
+          </p>
+          <p>
+            The mnemonic phrase can be used to recover your wallet. Store it
+            safely offline.
+          </p>
+        </CardFooter>
+      </Card>
+    </section>
   );
 }

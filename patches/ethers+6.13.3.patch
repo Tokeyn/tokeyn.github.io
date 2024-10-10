@@ -1,0 +1,15 @@
+diff --git a/node_modules/ethers/package.json b/node_modules/ethers/package.json
+index 545b840..9882d33 100644
+--- a/node_modules/ethers/package.json
++++ b/node_modules/ethers/package.json
+@@ -81,6 +81,10 @@
+     "./wordlists": {
+       "import": "./lib.esm/wordlists/index.js",
+       "default": "./lib.commonjs/wordlists/index.js"
++    },
++    "./wordlists-extra": {
++      "import": "./lib.esm/wordlists/wordlists-extra.js",
++      "default": "./lib.commonjs/wordlists/wordlists-extra.js"
+     }
+   },
+   "funding": [
