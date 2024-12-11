@@ -1,17 +1,11 @@
 import { cn } from '#/lib/utils';
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
+import { Playwrite_DE_Grund } from 'next/font/google';
 import './globals.css';
 
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
+const pinyin = Playwrite_DE_Grund({
+  variable: '--font-pinyin',
+  weight: 'variable',
 });
 
 export const metadata: Metadata = {
@@ -26,11 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={cn(geistSans.variable, geistMono.variable, 'antialiased')}
-      >
-        {children}
-      </body>
+      <body className={cn(pinyin.variable, 'antialiased')}>{children}</body>
     </html>
   );
 }

@@ -34,7 +34,7 @@ export function Hanzi({ word }: Props) {
           <svg viewBox="0 0 1200 600" className="w-32 h-16">
             <GraphicsPinyinGridSVG className="[&_path]:stroke-gray-600 [&_path]:fill-black" />
           </svg>
-          <div className="absolute inset-0 flex items-center justify-center text-3xl scale-y-125 tracking-wide">
+          <div className="font-pinyin absolute inset-0 flex items-center justify-center text-3xl scale-y-125 tracking-wide">
             {pinyin(word)}
           </div>
         </div>
