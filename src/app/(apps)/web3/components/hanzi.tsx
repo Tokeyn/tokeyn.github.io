@@ -16,10 +16,11 @@ type GraphicsItem = {
 };
 
 export function Hanzi({ word }: Props) {
-  const { data } = useSWR([word], async ([word]) => {
-    const module = await import(`#/assets/data-cn/${word}.json`);
-    return module.default as GraphicsItem;
-  });
+  const { data } = useSWR(
+    [word],
+    async ([word]) =>
+      (await import(`#/assets/data-cn/${word}.json`)).default as GraphicsItem
+  );
   const grids = useMemo(
     () =>
       data != null

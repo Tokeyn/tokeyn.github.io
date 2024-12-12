@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import Sentence from './sentence';
+import { WritingGrid } from '../../../../components/writing-grid';
 
 interface MnemonicProps {
   locale: string;
@@ -25,14 +25,8 @@ interface MnemonicComponentProps {
 }
 
 export function MnemonicCn({ value }: MnemonicComponentProps) {
-  const sentences = useMemo(() => value.split(' '), [value]);
-  return (
-    <article className="container mx-auto h-full overflow-auto p-2">
-      {sentences.map((segment, i) => (
-        <Sentence key={i} value={segment} />
-      ))}
-    </article>
-  );
+  const words = useMemo(() => value.split(' '), [value]);
+  return <WritingGrid words={words} />;
 }
 export function DefaultMnemonicComponent({
   value,

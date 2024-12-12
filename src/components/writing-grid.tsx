@@ -1,15 +1,13 @@
 'use client';
 
-import { useMemo } from 'react';
 import { cn } from '../lib/utils';
 import { WritingRow } from './writing-row';
 
 interface Props {
-  text: string;
+  words: string[];
 }
 
-export function WritingGrid({ text }: Props) {
-  const words = useMemo(() => text.split(''), [text]);
+export function WritingGrid({ words }: Props) {
   return words.length > 0 ? (
     <div
       className={cn(

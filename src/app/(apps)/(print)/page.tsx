@@ -10,7 +10,7 @@ import {
 } from '#/components/ui/dialog';
 import { Textarea } from '#/components/ui/textarea';
 import { Trash2 } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { WritingGrid } from '../../../components/writing-grid';
 
 export default function Home() {
@@ -33,6 +33,7 @@ export default function Home() {
     }
   }, [inputText]);
 
+  const words = useMemo(() => text.split(''), [text]);
   return (
     <div className="container flex flex-col p-4 gap-2">
       <div className="print:hidden flex items-center justify-end gap-2">
@@ -40,7 +41,7 @@ export default function Home() {
         <Button onClick={() => print()}>打印</Button>
       </div>
       <div className="mx-auto">
-        <WritingGrid text={text} />
+        <WritingGrid words={words} />
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">

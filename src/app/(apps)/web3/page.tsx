@@ -47,7 +47,7 @@ const wordlists: Record<string, Wordlist> = Object.fromEntries(
 
 export default function Page() {
   const [showPrivateKey, setShowPrivateKey] = useState(false);
-  const locales = useMemo(() => Object.keys(wordlists), [wordlists]);
+  const locales = useMemo(() => Object.keys(wordlists), []);
   const [locale, setLocale] = useState<string>('zh_cn');
 
   const [entropy, setEntropy] = useState<ethers.BytesLike | null>(null);
@@ -56,7 +56,7 @@ export default function Page() {
 
   const wordlist = useMemo(
     () => (locale != null ? wordlists[locale] : LangEn.wordlist()),
-    [wordlists, locale]
+    [locale]
   );
 
   const mnemonic = useMemo(() => {
@@ -102,7 +102,7 @@ export default function Page() {
         const mnemonicNew = ethers.Mnemonic.fromPhrase(phrase, null, wordlist);
         setManualPhrase(null);
         setEntropy(mnemonicNew.entropy);
-      } catch (error) {
+      } catch (_) {
         setManualPhrase(phrase);
       }
     },
