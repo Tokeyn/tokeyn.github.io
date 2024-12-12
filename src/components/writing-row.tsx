@@ -5,17 +5,15 @@ import { pinyin } from 'pinyin-pro';
 import { SVGProps, useMemo } from 'react';
 import useSWR from 'swr';
 
-type Props = {
+interface Props {
   word: string;
-};
+}
 
 type GraphicsItem = {
-  word: string;
   strokes: string[];
-  medians: number[][][];
 };
 
-export function Hanzi({ word }: Props) {
+export function WritingRow({ word }: Props) {
   const { data } = useSWR([word], async ([word]) => {
     const module = await import(`#/assets/data-cn/${word}.json`);
     return module.default as GraphicsItem;
@@ -23,68 +21,54 @@ export function Hanzi({ word }: Props) {
   const grids = useMemo(
     () =>
       data != null
-        ? Array.from({ length: 21 - data.strokes.length }, (_, i) => i)
+        ? Array.from({ length: 30 - data.strokes.length }, (_, i) => i)
         : null,
     [data]
   );
   const borderClass = 'border border-black';
-
   return data ? (
-    <div className={cn('flex w-[36rem] box-content', borderClass)}>
-      <div className="flex flex-col">
-        <div className="w-32 h-16 relative">
-          <GraphicsPinyinGridSVG
-            className={cn(
-              'w-full h-full [&_path]:stroke-gray-400',
-              borderClass
-            )}
-          />
-          <div className="font-pinyin absolute inset-0 bottom-1/3 flex items-end justify-center text-4xl leading-none">
-            {pinyin(word)}
-          </div>
-        </div>
-        <div className="w-32 h-32 relative">
-          <GraphicsGridSVG
-            className={cn(
-              'w-full h-full [&_path]:stroke-gray-400',
-              borderClass
-            )}
-          />
-          <GraphicsSVG
-            strokes={data.strokes}
-            className="absolute inset-0 [&_path]:fill-black"
-          />
+    <>
+      <div className="col-span-2 relative">
+        <GraphicsPinyinGridSVG
+          className={cn('[&_path]:stroke-gray-400 aspect-[2]', borderClass)}
+        />
+        <div className="font-pinyin absolute inset-0 bottom-1/3 flex items-end justify-center text-4xl leading-none">
+          {pinyin(word)}
         </div>
       </div>
-      <div className="flex flex-wrap">
-        {data.strokes.map((_, i, array) => (
-          <div key={i} className="w-16 h-16 relative">
-            <GraphicsGridSVG
-              className={cn(
-                'w-full h-full [&_path]:stroke-gray-400',
-                borderClass
-              )}
-            />
-            <GraphicsSVG
-              strokes={array}
-              endIndex={i}
-              className={'absolute inset-0 w-16 h-16 [&_path]:fill-gray-300'}
-            />
-          </div>
-        ))}
-        {grids?.map((_, i) => (
-          <div key={i} className="w-16 h-16 relative">
-            <GraphicsGridSVG
-              className={cn('[&_path]:stroke-gray-400', borderClass)}
-            />
-            {/* <GraphicsSVG
+      <div className="col-start-1 col-span-2 row-span-2 relative">
+        <GraphicsGridSVG
+          className={cn('[&_path]:stroke-gray-400', borderClass)}
+        />
+        <GraphicsSVG
+          strokes={data.strokes}
+          className="absolute inset-0 [&_path]:fill-black"
+        />
+      </div>
+      {data.strokes.map((_, i, array) => (
+        <div key={i} className="relative row-span-1">
+          <GraphicsGridSVG
+            className={cn('[&_path]:stroke-gray-400', borderClass)}
+          />
+          <GraphicsSVG
+            strokes={array}
+            endIndex={i}
+            className={'absolute inset-0 [&_path]:fill-gray-300'}
+          />
+        </div>
+      ))}
+      {grids?.map((_, i) => (
+        <div key={i} className="relative">
+          <GraphicsGridSVG
+            className={cn('[&_path]:stroke-gray-400', borderClass)}
+          />
+          {/* <GraphicsSVG
               strokes={data.strokes}
               className="absolute inset-0 w-16 h-16 [&_path]:stroke-gray-600 [&_path]:fill-none"
             /> */}
-          </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      ))}
+    </>
   ) : null;
 }
 

@@ -11,7 +11,7 @@ import {
 import { Textarea } from '#/components/ui/textarea';
 import { Trash2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
-import Sentence from './components/sentence';
+import { WritingGrid } from '../../../components/writing-grid';
 
 export default function Home() {
   const [text, setText] = useState('');
@@ -31,19 +31,17 @@ export default function Home() {
     } else {
       alert('请输入文字后再进行下一步');
     }
-  }, []);
+  }, [inputText]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <div className="hidden print:block">
-        Are you seriously trying to print this? It's secret!
+    <div className="container flex flex-col p-4 gap-2">
+      <div className="print:hidden flex items-center justify-end gap-2">
+        <Button onClick={() => setOpen(true)}>打开输入弹窗</Button>
+        <Button onClick={() => print()}>打印</Button>
       </div>
-      <Button onClick={() => setOpen(true)}>打开输入弹窗</Button>
-
-      <div className="mt-4">
-        <Sentence value={text} />
+      <div className="mx-auto">
+        <WritingGrid text={text} />
       </div>
-
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
