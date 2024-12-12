@@ -92,7 +92,9 @@ export default function Page() {
           setManualPhrase(null);
           setEntropy(mnemonicNew.entropy);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
     [mnemonic]
   );
@@ -102,7 +104,9 @@ export default function Page() {
         const mnemonicNew = ethers.Mnemonic.fromPhrase(phrase, null, wordlist);
         setManualPhrase(null);
         setEntropy(mnemonicNew.entropy);
-      } catch (_) {
+      } catch (error) {
+        console.log(error);
+
         setManualPhrase(phrase);
       }
     },
