@@ -25,8 +25,8 @@ interface MnemonicComponentProps {
 }
 
 export function MnemonicCn({ value }: MnemonicComponentProps) {
-  const words = useMemo(() => value.split(' '), [value]);
-  return <WritingGrid words={words} />;
+  const characters = useMemo(() => value.split(' '), [value]);
+  return <WritingGrid characters={characters} />;
 }
 export function DefaultMnemonicComponent({
   value,
