@@ -32,17 +32,18 @@ export default function Home() {
       alert('请输入文字后再进行下一步');
     }
   }, [inputText]);
-
-  const words = useMemo(() => text.split(''), [text]);
+  const characters = useMemo(() => text.split(/\s*/), [text]);
   return (
-    <div className="container flex flex-col p-4 gap-2">
-      <div className="print:hidden flex items-center justify-end gap-2">
+    <div className="flex flex-col gap-4 p-4 print:p-0">
+      <div className="print:hidden flex items-center justify-end gap-4">
         <Button onClick={() => setOpen(true)}>打开输入弹窗</Button>
         <Button onClick={() => print()}>打印</Button>
       </div>
-      <div className="mx-auto">
-        <WritingGrid words={words} />
-      </div>
+      <WritingGrid
+        characters={characters}
+        chunkSize={3}
+        className="flex flex-col gap-4"
+      />
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

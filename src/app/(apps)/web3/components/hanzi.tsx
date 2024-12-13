@@ -40,7 +40,7 @@ export function Hanzi({ word }: Props) {
               borderClass
             )}
           />
-          <div className="font-pinyin absolute inset-0 bottom-1/3 flex items-end justify-center text-4xl leading-none">
+          <div className="font-pinyin font-extralight absolute inset-0 bottom-1/3 flex items-end justify-center text-4xl leading-none">
             {pinyin(word)}
           </div>
         </div>
